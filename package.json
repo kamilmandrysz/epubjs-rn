@@ -1,9 +1,9 @@
 {
   "name": "epubjs-rn-66",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Arnoldnuo/epubjs-rn.git"
+    "url": "git+https://github.com/kamilmandrysz/epubjs-rn.git"
   },
   "main": "./components/index.js",
   "private": false,
@@ -62,8 +62,8 @@
   ],
   "description": "Epub.js React Native Components ================================",
   "bugs": {
-    "url": "https://github.com/Arnoldnuo/epubjs-rn/issues"
+    "url": "https://github.com/kamilmandrysz/epubjs-rn/epubjs-rn/issues"
   },
-  "homepage": "https://github.com/Arnoldnuo/epubjs-rn#readme",
+  "homepage": "https://github.com/kamilmandrysz/epubjs-rn/epubjs-rn#readme",
   "author": ""
 }
