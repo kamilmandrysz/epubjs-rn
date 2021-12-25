@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { Component } from "react";
 
 import {
   StyleSheet,
@@ -7,16 +7,16 @@ import {
   Dimensions,
   Platform,
   AppState,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 
-import { WebView } from 'react-native-webview';
+import { WebView } from "react-native-webview";
 
-import EventEmitter from 'event-emitter'
+import EventEmitter from "event-emitter";
 
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-community/async-storage";
 
-const URL = require("epubjs/libs/url/url-polyfill.js");
+const URL = require("../libs/url/url-polyfill");
 
 const EMBEDDED_HTML = `
 <!DOCTYPE html>
@@ -58,8 +58,7 @@ class Rendition extends Component {
 
     this.state = {
       loaded: false,
-    }
-
+    };
   }
 
   componentDidMount() {
@@ -109,8 +108,10 @@ class Rendition extends Component {
       this.font(this.props.font);
     }
 
-    if (prevProps.width !== this.props.width ||
-        prevProps.height !== this.props.height) {
+    if (
+      prevProps.width !== this.props.width ||
+      prevProps.height !== this.props.height
+    ) {
       this.resize(this.props.width, this.props.height);
     }
   }
@@ -121,10 +122,10 @@ class Rendition extends Component {
     __DEV__ && console.log("loading book: ", bookUrl);
 
     let config = {
-      "minSpreadWidth": this.props.minSpreadWidth || 815,
-      "flow": this.props.flow || "paginated",
-      "gap": this.props.gap,
-      "fullsize": true
+      minSpreadWidth: this.props.minSpreadWidth || 815,
+      flow: this.props.flow || "paginated",
+      gap: this.props.gap,
+      fullsize: true,
     };
 
     if (this.props.stylesheet) {
@@ -182,9 +183,9 @@ class Rendition extends Component {
     if (!this._webviewLoaded) return;
 
     if (spine) {
-      this.sendToBridge("display", [{ "spine": spine}]);
+      this.sendToBridge("display", [{ spine: spine }]);
     } else if (target) {
-      this.sendToBridge("display", [{ "target": target}]);
+      this.sendToBridge("display", [{ target: target }]);
     } else {
       this.sendToBridge("display");
     }
@@ -194,7 +195,7 @@ class Rendition extends Component {
     if (!w || !h) {
       return;
     }
-    this.sendToBridge("resize", [w,h]);
+    this.sendToBridge("resize", [w, h]);
   }
 
   flow(f) {
@@ -238,29 +239,29 @@ class Rendition extends Component {
     }
   }
 
-  highlight (cfiRange, data, cb, className, style) {
-    this.sendToBridge("highlight", [cfiRange, data, cb, className,style]);
+  highlight(cfiRange, data, cb, className, style) {
+    this.sendToBridge("highlight", [cfiRange, data, cb, className, style]);
   }
 
-  underline (cfiRange, data) {
+  underline(cfiRange, data) {
     this.sendToBridge("underline", [cfiRange, data]);
   }
 
-  mark (cfiRange, data) {
+  mark(cfiRange, data) {
     this.sendToBridge("mark", [cfiRange, data]);
-	}
+  }
 
-  unhighlight (cfiRange) {
+  unhighlight(cfiRange) {
     this.sendToBridge("removeAnnotation", [cfiRange, "highlight"]);
-	}
+  }
 
-	ununderline (cfiRange) {
+  ununderline(cfiRange) {
     this.sendToBridge("removeAnnotation", [cfiRange, "underline"]);
-	}
+  }
 
-	unmark (cfiRange) {
+  unmark(cfiRange) {
     this.sendToBridge("removeAnnotation", [cfiRange, "mark"]);
-	}
+  }
 
   next() {
     this.sendToBridge("next");
@@ -270,9 +271,7 @@ class Rendition extends Component {
     this.sendToBridge("prev");
   }
 
-  destroy() {
-
-  }
+  destroy() {}
 
   postMessage(str) {
     if (this.webviewbridgeRef.current) {
@@ -284,7 +283,7 @@ class Rendition extends Component {
     var str = JSON.stringify({
       method: method,
       args: args,
-      promise: promiseId
+      promise: promiseId,
     });
 
     if (!this.webviewbridgeRef.current) {
@@ -330,25 +329,26 @@ class Rendition extends Component {
       }
       case "rendered": {
         if (!this.state.loaded) {
-          this.setState({loaded: true});
+          this.setState({ loaded: true });
         }
         break;
       }
       case "relocated": {
-        let {location} = decoded;
+        let { location } = decoded;
         this._relocated(location);
         if (!this.state.loaded) {
-          this.setState({loaded: true});
+          this.setState({ loaded: true });
         }
         break;
       }
       case "resized": {
-        let {size} = decoded;
+        let { size } = decoded;
         console.log("resized", size.width, size.height);
         break;
       }
       case "press": {
-        this.props.onPress && this.props.onPress(decoded.cfi, decoded.position, this);
+        this.props.onPress &&
+          this.props.onPress(decoded.cfi, decoded.position, this);
         break;
       }
       case "longpress": {
@@ -356,27 +356,34 @@ class Rendition extends Component {
         break;
       }
       case "dblpress": {
-        this.props.onDblPress && this.props.onDblPress(decoded.cfi, decoded.position, decoded.imgSrc, this);
+        this.props.onDblPress &&
+          this.props.onDblPress(
+            decoded.cfi,
+            decoded.position,
+            decoded.imgSrc,
+            this
+          );
         break;
       }
       case "selected": {
-        let {cfiRange} = decoded;
+        let { cfiRange } = decoded;
         this._selected(cfiRange);
         break;
       }
       case "markClicked": {
-        let {cfiRange, data} = decoded;
+        let { cfiRange, data } = decoded;
         this._markClicked(cfiRange, data);
         break;
       }
       case "added": {
-        let {sectionIndex} = decoded;
+        let { sectionIndex } = decoded;
         this.props.onViewAdded && this.props.onViewAdded(sectionIndex);
         break;
       }
       case "removed": {
-        let {sectionIndex} = decoded;
-        this.props.beforeViewRemoved && this.props.beforeViewRemoved(sectionIndex);
+        let { sectionIndex } = decoded;
+        this.props.beforeViewRemoved &&
+          this.props.beforeViewRemoved(sectionIndex);
         break;
       }
       case "ready": {
@@ -385,9 +392,9 @@ class Rendition extends Component {
       }
       default: {
         if (this.props.onExtendEvent[decoded.method]) {
-            this.props.onExtendEvent[decoded.method](decoded);
+          this.props.onExtendEvent[decoded.method](decoded);
         } else {
-            console.log("msg", decoded);
+          console.log("msg", decoded);
         }
       }
     }
@@ -422,15 +429,23 @@ class Rendition extends Component {
 
   render() {
     let loader = (
-      <TouchableOpacity onPress={() => this.props.onPress('')} style={styles.loadScreen}>
-        <View style={[styles.loadScreen, {
-            backgroundColor: this.props.backgroundColor || "#FFFFFF"
-          }]}>
-            <ActivityIndicator
-                color={this.props.color || "black"}
-                size={this.props.size || "large"}
-                style={{ flex: 1 }}
-              />
+      <TouchableOpacity
+        onPress={() => this.props.onPress("")}
+        style={styles.loadScreen}
+      >
+        <View
+          style={[
+            styles.loadScreen,
+            {
+              backgroundColor: this.props.backgroundColor || "#FFFFFF",
+            },
+          ]}
+        >
+          <ActivityIndicator
+            color={this.props.color || "black"}
+            size={this.props.size || "large"}
+            style={{ flex: 1 }}
+          />
         </View>
       </TouchableOpacity>
     );
@@ -440,27 +455,43 @@ class Rendition extends Component {
     }
 
     return (
-      <View ref={this.framerRef} style={[styles.container, {
-          maxWidth: this.props.width, maxHeight: this.props.height,
-          minWidth: this.props.width, minHeight: this.props.height
-        }]}>
+      <View
+        ref={this.framerRef}
+        style={[
+          styles.container,
+          {
+            maxWidth: this.props.width,
+            maxHeight: this.props.height,
+            minWidth: this.props.width,
+            minHeight: this.props.height,
+          },
+        ]}
+      >
         <WebView
-          showsHorizontalScrollIndicator={this.props.showsHorizontalScrollIndicator}
+          showsHorizontalScrollIndicator={
+            this.props.showsHorizontalScrollIndicator
+          }
           showsVerticalScrollIndicator={this.props.showsVerticalScrollIndicator}
           ref={this.webviewbridgeRef}
-          source={{html: EMBEDDED_HTML.replace('__JS__', this.props.js || ''), baseUrl: this.props.url}}
-          style={[styles.manager, {
-            backgroundColor: this.props.backgroundColor || "#FFFFFF"
-          }]}
+          source={{
+            html: EMBEDDED_HTML.replace("__JS__", this.props.js || ""),
+            baseUrl: this.props.url,
+          }}
+          style={[
+            styles.manager,
+            {
+              backgroundColor: this.props.backgroundColor || "#FFFFFF",
+            },
+          ]}
           bounces={false}
           javaScriptEnabled={true}
           scrollEnabled={this.props.scrollEnabled}
           pagingEnabled={this.props.pagingEnabled}
           onMessage={this._onBridgeMessage.bind(this)}
           contentInsetAdjustmentBehavior="never"
-          contentInset={{top: 0}}
+          contentInset={{ top: 0 }}
           automaticallyAdjustContentInsets={false}
-          originWhitelist={['*']}
+          originWhitelist={["*"]}
           allowsLinkPreview={false}
         />
         {!this.state.loaded ? loader : null}
@@ -495,8 +526,8 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#fff",
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 });
 
 Rendition.defaultProps = {
